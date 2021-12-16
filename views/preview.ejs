@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Buy a book</title>
+    <link rel="stylesheet" href="https://unpkg.com/bulma@0.9.0/css/bulma.min.css" />
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.22.0/axios.min.js"></script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  </head>
+
+  <body>
+
+		<section class="hero is-link is-fullheight">
+			<div class="hero-body is-centered">
+				<div class="container">
+					<div class="columns is-centered is-vcentered">
+						
+						<div class="column is-6">
+							<p class="title is-size-1">Just a course</p>
+							<p class="subtitle is-size-4">You can now buy this course just for ₹500</p>
+
+							<button class="button is-link is-light is-medium" id='rzp-button1'>Get the course</button>
+						</div>
+					
+						<div class="column is-5">
+							<figure class="image">
+								
+								<img src="https://images.unsplash.com/photo-1589998059171-988d887df646?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1" 
+								style="border-radius: 10px" alt="">
+
+							</figure>
+						</div>
+
+					</div>
+				</div>
+			</div>
+	</section>
+    <script>
+        axios.post("http://localhost:3001/order",{amount:500, currency:"INR"}).then((info) =>{console.log(info)
+            console.log(info)
+        
+            var options = {
+    "key": "rzp_test_RB4XB3fA0t4jRO", // Enter the Key ID generated from the Dashboard
+    "amount": "50000", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "Saarthi TechPro",
+    "description": "Test Transaction",
+    "image": "https://static.wixstatic.com/media/df03dd_9c79bee09bb94a4199cdab488f3b1289~mv2.jpg/v1/fill/w_563,h_423,fp_0.50_0.50,q_90/df03dd_9c79bee09bb94a4199cdab488f3b1289~mv2.webp",
+    "order_id": info.data.id, //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+    "callback_url": "/order-check",
+    
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+var rzp1 = new Razorpay(options);
+document.getElementById('rzp-button1').onclick = function(e){
+    rzp1.open();
+    e.preventDefault();
+    rzp1.on('payment.failed', function (response){
+        console.log(response.error)
+        alert(response.error.code);
+        alert(response.error.description);
+        alert(response.error.metadata.payment_id);
+    
+}
+    )
+    rzp1.on('payment.cancel', (data)=>{
+        console.log(data)
+    })
+    
+}
+        
+        })
+    </script>
+
+  </body>
+
